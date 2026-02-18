@@ -3,9 +3,9 @@ import json
 import os
 from sqlalchemy.future import select
 # Importa tus componentes desde donde los tengas definidos
-from appLitestar.database.session import async_session, engine, Base
-from appLitestar.database.models import Usuario
-from appLitestar.services.auth_services import hash_password
+from database.session import async_session, engine, Base
+from database.models.modelsUsuarios import Usuario
+from services.auth_services import hash_password
 
 async def seed_data():
     print(f"🚀 Conectando a la DB de forma asíncrona...")
@@ -16,7 +16,7 @@ async def seed_data():
 
     async with async_session() as db:
         # Cargar JSON
-        file_path = os.path.join(os.path.dirname(__file__), 'usuarios.json')
+        file_path = os.path.join(os.path.dirname(__file__), 'data', 'datosBrutos.json')
         with open(file_path, 'r', encoding='utf-8') as f:
             raw_data = json.load(f)
 
@@ -45,8 +45,6 @@ async def seed_data():
         print("\n✨ ¡Carga completada con éxito!")
 
 if __name__ == "__main__":
-    input("\nPresiona ENTER para iniciar la ventana...")
-
     try:
         # Ejecutar el bucle asíncrono
         asyncio.run(seed_data())

@@ -1,33 +1,33 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
-# Cargar variables del archivo .env
 load_dotenv()
 
-# --- CONFIGURACIÓN DE CONEXIÓN ---
 DATABASE_URL = os.getenv("DATABASE_URL")
 DB_STATUS = "🟢 Producción (MySQL/Postgres)"
 
 if not DATABASE_URL:
-    # Nota: Para Litestar/Async preferimos aiosqlite
     DATABASE_URL = "sqlite+aiosqlite:///./test.db"
     DB_STATUS = "🟡 Modo de Respaldo (SQLite Local)"
 
-engine = create_async_engine(DATABASE_URL)
-async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+# 1. Crear el engine asíncrono
+engine = create_async_engine(DATABASE_URL, echo=True)
 
-# --- PASAR EL ESTADO A LA APP ---
-def get_initial_state() -> dict:
-    return {"db_status": DB_STATUS}
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# 2. Configurar la fábrica de sesiones asíncronas
+async_session = sessionmaker(
+    engine, 
+    expire_on_commit=False, 
+    class_=AsyncSession
+)
+
 Base = declarative_base()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# 3. Función para obtener la base de datos (Dependencia para Litestar)
+async def get_db():
+    async with async_session() as session:
+        yield session
+
+def get_initial_state() -> dict:
+    return {"db_status": DB_STATUS}

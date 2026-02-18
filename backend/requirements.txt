@@ -3,3 +3,7 @@ uvicorn
 sqlalchemy
 dotenv
 Jinja2
+passlib
+pymysql
+aiomysql
+bcrypt==4.0.1
