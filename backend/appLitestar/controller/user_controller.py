@@ -5,7 +5,8 @@ from database.models.modelsUsuarios import Usuario
 from repositories.user_repository import UserRepository
 from services.auth_service import AuthService
 from litestar.response import Template
-from litestar.template.config import TemplateConfig
+from litestar.response import Redirect
+
 
 class AuthController(Controller):
     path = "/auth"
@@ -16,13 +17,6 @@ class AuthController(Controller):
         service = AuthService(repo)
         
         user = await service.authenticate(data["username"], data["password"])
-
-        if not user:
-            print(f"❌ Usuario no encontrado: {user}")
-        else:
-            # Si el usuario existe, el problema es la contraseña
-            print(f"✅ Usuario encontrado: {user.username}")
-        print(f"🔑 Verificando contraseña...")
         if not user:
             return Response({"error": "Credenciales inválidas"}, status_code=HTTP_401_UNAUTHORIZED)
         
@@ -42,7 +36,8 @@ class AuthController(Controller):
     async def get_table_data(self, request: Request, db_session: AsyncSession) -> list:
         user_id = request.session.get("user_id")
         if not user_id:
-            return Response({"error": "No logueado"}, status_code=HTTP_401_UNAUTHORIZED)
+            # En lugar de devolver 401 Unauthorized, devolvemos una redirección
+            return Redirect(path="/auth/login-page")
             
         repo = UserRepository(db_session)
         service = AuthService(repo)

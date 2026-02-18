@@ -36,6 +36,7 @@ class AuthService:
         # Rol 'usuario': solo se ve a sí mismo
         return [current_user]
 
+
 def hash_password(password: str) -> str:
     # Bcrypt solo acepta hasta 72 caracteres, truncamos por seguridad y para evitar errores
     return pwd_context.hash(password[:72])

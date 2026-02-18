@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from aiomysql import OperationalError
 from litestar import Litestar, get
+from litestar.response import Redirect
 from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.di import Provide
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
@@ -45,9 +46,13 @@ async def on_startup() -> None:
             await conn.run_sync(Base.metadata.create_all)
             print("✅ Aplicación iniciada con SQLite local.")
 
+@get("/{path:path}", include_in_schema=False)
+async def redirect_all(path: str) -> Redirect:
+    return Redirect(path="/auth/login-page")
+
 # 3. Instancia de la Aplicación Litestar
 app = Litestar(
-    route_handlers=[
+    route_handlers=[redirect_all,
         AuthController,
         create_static_files_router(path="/static", directories=["static"]),
         # UserController, # Aquí añadirías más controladores si los separas
