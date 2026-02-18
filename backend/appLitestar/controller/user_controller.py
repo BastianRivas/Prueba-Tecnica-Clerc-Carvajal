@@ -16,6 +16,13 @@ class AuthController(Controller):
         service = AuthService(repo)
         
         user = await service.authenticate(data["username"], data["password"])
+
+        if not user:
+            print(f"❌ Usuario no encontrado: {user}")
+        else:
+            # Si el usuario existe, el problema es la contraseña
+            print(f"✅ Usuario encontrado: {user.username}")
+        print(f"🔑 Verificando contraseña...")
         if not user:
             return Response({"error": "Credenciales inválidas"}, status_code=HTTP_401_UNAUTHORIZED)
         
