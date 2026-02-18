@@ -21,7 +21,11 @@ class AuthController(Controller):
         
         # Guardamos el ID en la sesión de Litestar
         request.set_session({"user_id": user.id})
-        return {"message": f"Bienvenido {user.nombre}", "rol": user.rol}
+        return {
+            "message": "success",
+            "nombre": user.nombre, 
+            "rol": user.rol
+        }
     
     @get("/login-page")
     async def login_page(self, request: Request) -> Template: 

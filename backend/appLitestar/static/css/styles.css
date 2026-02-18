@@ -124,3 +124,13 @@ table.dataTable tbody td {
     font-size: 0.875rem;
     font-weight: 500;
 }
+
+#user-rol {
+    background-color: #dbeafe;
+    color: #1e40af;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-transform: uppercase;
+}

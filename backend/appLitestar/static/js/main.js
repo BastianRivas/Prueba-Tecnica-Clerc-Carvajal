@@ -15,7 +15,8 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(response) {
-                $('#user-display').text(response.rol.toUpperCase());
+                $('#user-display').text(response.nombre);
+                $('#user-rol').text(response.rol.toUpperCase()); // En mayúsculas para que luzca mejor
                 $('#login-container').hide();
                 $('#dashboard-container').show();
                 cargarDatosTabla(); // Llamamos a la API de datos
