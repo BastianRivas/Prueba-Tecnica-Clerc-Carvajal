@@ -2,3 +2,4 @@ litestar
 uvicorn
 sqlalchemy
 dotenv
+Jinja2
