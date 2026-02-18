@@ -51,5 +51,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"💥 Error grave: {e}")
     
-    # ESTO EVITA QUE LA VENTANA SE CIERRE SOLA
-    input("\nPresiona ENTER para cerrar esta ventana...")
+    # ESTO EVITA QUE LA VENTANA SE CIERRE SOLA, solo para pruebas en Windows. En producción, no es necesario.
+    # input("\nPresiona ENTER para cerrar esta ventana...")
