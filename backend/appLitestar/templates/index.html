@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Gestión - Prueba Técnica</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+
+    <div id="login-container">
+        <h2>Iniciar Sesión</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <p id="error-msg" style="color:red; display:none;">Credenciales incorrectas</p>
+    </div>
+
+    <div id="dashboard-container" style="display:none;">
+        <header>
+            <h1>Bienvenido, <span id="user-display"></span>, tu rol es: <span id="user-rol"></span></h1>
+            <button id="logout-btn">Cerrar Sesión</button>
+        </header>
+        
+        <hr>
+        
+        <h3>Usuarios con acceso según tu rol:</h3>
+        <table id="usuarios-table" class="display">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Renta Mensual</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

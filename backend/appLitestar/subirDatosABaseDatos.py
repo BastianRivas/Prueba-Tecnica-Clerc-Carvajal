@@ -5,7 +5,7 @@ from sqlalchemy.future import select
 # Importa tus componentes desde donde los tengas definidos
 from database.session import async_session, engine, Base
 from database.models.modelsUsuarios import Usuario
-from services.auth_services import hash_password
+from backend.appLitestar.services.auth_service import hash_password
 
 async def seed_data():
     print(f"🚀 Conectando a la DB de forma asíncrona...")
