@@ -5,19 +5,18 @@ from litestar import Litestar, get
 from litestar.response import Redirect
 from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.di import Provide
-from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
-
-# Importamos tus componentes (ajusta las rutas según tu estructura de carpetas)
 from database.session import get_db, engine, Base, async_session
 from controller.user_controller import AuthController
 from litestar.static_files import create_static_files_router # Importante
 from litestar.template.config import TemplateConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
-# 1. Configuración de Sesiones (Requisito: Gestión de sesiones)
+
+# Configuración de Sesiones
 # Esto guardará un ID en una cookie y los datos en el servidor
 session_config = ServerSideSessionConfig()
 BASE_DIR = Path(__file__).parent # Esto apunta a la carpeta appLitestar
-# 2. Función para inicializar la base de datos al arrancar
+
+# Función para inicializar la base de datos al arrancar
 async def on_startup() -> None:
     global engine # Necesitamos acceder al engine global para re-configurarlo
     
@@ -46,6 +45,7 @@ async def on_startup() -> None:
             await conn.run_sync(Base.metadata.create_all)
             print("✅ Aplicación iniciada con SQLite local.")
 
+#Para llevarlo directo a la pagina de login, se redirecciona a esa ruta desde la raiz y cualquier ruta no definida. Esto es opcional pero mejora la experiencia de usuario al no mostrar un error 404 o una página vacía.
 @get("/")
 async def index() -> Redirect:
     return Redirect(path="/auth/login-page")
@@ -54,12 +54,11 @@ async def index() -> Redirect:
 async def redirect_all(path: str) -> Redirect:
     return Redirect(path="/auth/login-page")
 
-# 3. Instancia de la Aplicación Litestar
+#Instancia de la Aplicación Litestar
 app = Litestar(
-    route_handlers=[index, redirect_all, # Rutas globales
+    route_handlers=[index, redirect_all,
         AuthController,
         create_static_files_router(path="/static", directories=["static"]),
-        # UserController, # Aquí añadirías más controladores si los separas
     ],
     dependencies={
         "db_session": Provide(get_db), # Inyecta la sesión de SQLAlchemy automáticamente
@@ -70,6 +69,14 @@ app = Litestar(
         directory=BASE_DIR / "templates", # Ruta absoluta
         engine=JinjaTemplateEngine,
     ),
-    # Para que el frontend pueda acceder (CORS) si fuera necesario
+    # Como solo se pidio backend no fue necesario configurar CORS, pero si se necesitara se haria aquí con el parametro.
+    # ---EJEMPLO DE CONFIGURACIÓN DE LA APP --- 
+    # Si se necesitara CORS para el frontend Angular (ajusta el origen según la configuración necesaria o donde se desplego):
+    # cors_config = CORSConfig(
+    #     allow_origins=["http://localhost:4200"],  # El origen de tu Angular
+    #     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    #     allow_headers=["*"],  # Permite todos los headers (incluyendo Content-Type)
+    #     allow_credentials=True,
+    # )
     cors_config=None, 
 )
