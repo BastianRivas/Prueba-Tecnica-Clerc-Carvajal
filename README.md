@@ -3,7 +3,7 @@
 Este proyecto implementa un sistema de autenticación y tabla de datos con reglas de visibilidad según rol. Está basado en **Litestar** para el backend y utiliza HTML/CSS/JavaScript en el frontend.
 
 ## 🚀 Despliegue de aplicación
-El proyecto esta disponible en la pagina de Render, puedes comprobar lo que hice en el siguiente link:
+El proyecto esta disponible en la pagina de Render, puedes comprobar lo que hice en el siguiente link, puede de que la aplicación este durmiendo espera a que se termine de desplegar, tiempo aproximado 1 minuto:
 ```
 https://prueba-tecnica-clerc-carvajal.onrender.com/auth/login-page
 ```
@@ -11,6 +11,10 @@ https://prueba-tecnica-clerc-carvajal.onrender.com/auth/login-page
 Algunos datos de inicio de sesion son:
 ```
 jhon_doe
+12345
+```
+```
+ana_torres
 12345
 ```
 ```
@@ -69,7 +73,11 @@ backend/
 
 4. **Configurar / inicializar base de datos**
 
-   - Por defecto intenta conectarse a MySQL si las variables de entorno (configurar: `DATABASE_URL` con estrutura:  DATABASE_URL=mysql+aiomysql://usuario:password@localhost:3306/nombre_db en el .env) apuntan a un servidor.
+   - Por defecto intenta conectarse a MySQL si las variables de entorno apuntan a un servidor.
+   ```
+    (configurar: `DATABASE_URL` con estrutura:  DATABASE_URL=mysql+aiomysql://usuario:password@localhost:3306/nombre_db en el .env) 
+    ```
+
    - Fallback automático a SQLite (`test.db`) cuando no hay conexión MySQL.
 
    Para cargar los datos de `datosBrutos.json` (Son los datos que se nos entregaron para la prueba técnica):
@@ -84,7 +92,7 @@ backend/
 
    ```powershell
    
-   uvicorn app:app o uvicorn app:app --reload si es que se quiere modificar y que se recargue solo
+   uvicorn app:app --reload
    ```
 
    Por defecto se sirve en `http://localhost:8000` (ver salida del servidor litestar).
