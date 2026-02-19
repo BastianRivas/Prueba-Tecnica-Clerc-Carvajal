@@ -2,6 +2,23 @@
 
 Este proyecto implementa un sistema de autenticación y tabla de datos con reglas de visibilidad según rol. Está basado en **Litestar** para el backend y utiliza HTML/CSS/JavaScript en el frontend.
 
+## 🚀 Despliegue de aplicación
+El proyecto esta disponible en la pagina de Render, puedes comprobar lo que hice en el siguiente link:
+```
+https://prueba-tecnica-clerc-carvajal.onrender.com/auth/login-page
+```
+
+Algunos datos de inicio de sesion son:
+```
+jhon_doe
+12345
+```
+```
+camila_navarro
+12345
+```
+
+
 ## 📁 Estructura principal
 
 ```
@@ -25,13 +42,14 @@ backend/
 - pip para instalar dependencias
 
 > En Windows se recomienda ejecutar desde un PowerShell con permisos adecuados.
+> O utilizar Visual Studio Code.
 
 ## 🚀 Instalación y puesta en marcha
 
 1. **Clonar el repositorio**
 
    ```powershell
-   git clone <repo-url> Prueba-Tecnica-Clerc-Carvajal
+   git clone https://github.com/BastianRivas/Prueba-Tecnica-Clerc-Carvajal Prueba-Tecnica-Clerc-Carvajal
    cd Prueba-Tecnica-Clerc-Carvajal\backend\appLitestar
    ```
 
@@ -45,19 +63,19 @@ backend/
 3. **Instalar dependencias**
 
    ```powershell
+   cd .\backend\appLitestar\ // para acceder a la carpeta con el contenido
    pip install -r requirements.txt
-   # (si no existe este archivo, ver sección "Dependencias" abajo)
    ```
 
 4. **Configurar / inicializar base de datos**
 
-   - Por defecto intenta conectarse a MySQL si las variables de entorno (p.ej. `DATABASE_URL`) apuntan a un servidor.
+   - Por defecto intenta conectarse a MySQL si las variables de entorno (configurar: `DATABASE_URL` con estrutura:  DATABASE_URL=mysql+aiomysql://usuario:password@localhost:3306/nombre_db en el .env) apuntan a un servidor.
    - Fallback automático a SQLite (`test.db`) cuando no hay conexión MySQL.
 
-   Para cargar los datos de `datosBrutos.json`:
+   Para cargar los datos de `datosBrutos.json` (Son los datos que se nos entregaron para la prueba técnica):
 
    ```powershell
-   python subirDatosABaseDatos.py
+   uvicorn app.main:app --reload   //Asegurate de estar en la carpeta adecuada
    ```
 
    Esto creará las tablas y añadirá usuarios con contraseña `12345` (hash).
@@ -65,8 +83,8 @@ backend/
 5. **Iniciar la aplicación**
 
    ```powershell
-   cd .\backend\appLitestar\ // para acceder a la carpeta con el app.py
-   python app.py
+   
+   uvicorn app:app o uvicorn app:app --reload si es que se quiere modificar y que se recargue solo
    ```
 
    Por defecto se sirve en `http://localhost:8000` (ver salida del servidor litestar).
@@ -78,7 +96,7 @@ backend/
 
 ## 🔐 Usuarios de ejemplo
 
-Los usuarios iniciales se cargan desde `data/datosBrutos.json`. El archivo no incluye contraseñas: el script `subirDatosABaseDatos.py` genera usuarios con contraseña genérica `12345` (hasheada). Puedes modificar esto o insertar nuevos usuarios directamente en la base.
+Los usuarios iniciales se cargan desde `data/datosBrutos.json`. El archivo no incluye contraseñas: el script `subirDatosABaseDatos.py` genera usuarios con contraseña genérica `12345` (hasheada).
 
 Roles disponibles: `admin`, `supervisor`, `usuario`.
 
