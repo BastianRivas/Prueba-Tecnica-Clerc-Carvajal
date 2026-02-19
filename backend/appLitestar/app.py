@@ -10,6 +10,7 @@ from controller.user_controller import AuthController
 from litestar.static_files import create_static_files_router # Importante
 from litestar.template.config import TemplateConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
+from litestar.config.cors import CORSConfig
 
 # Configuración de Sesiones
 # Esto guardará un ID en una cookie y los datos en el servidor
@@ -54,6 +55,16 @@ async def index() -> Redirect:
 async def redirect_all(path: str) -> Redirect:
     return Redirect(path="/auth/login-page")
 
+
+
+# Definimos la configuración de CORS
+cors_config = CORSConfig(
+    allow_origins=["http://localhost:4200"], # Permite Angular local
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["*"],
+    allow_credentials=True, # Importante si usas sesiones/cookies
+)
+
 #Instancia de la Aplicación Litestar
 app = Litestar(
     route_handlers=[index, redirect_all,
@@ -69,14 +80,5 @@ app = Litestar(
         directory=BASE_DIR / "templates", # Ruta absoluta
         engine=JinjaTemplateEngine,
     ),
-    # Como solo se pidio backend no fue necesario configurar CORS, pero si se necesitara se haria aquí con el parametro.
-    # ---EJEMPLO DE CONFIGURACIÓN DE LA APP --- 
-    # Si se necesitara CORS para el frontend Angular (ajusta el origen según la configuración necesaria o donde se desplego):
-    # cors_config = CORSConfig(
-    #     allow_origins=["http://localhost:4200"],  # El origen de tu Angular
-    #     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    #     allow_headers=["*"],  # Permite todos los headers (incluyendo Content-Type)
-    #     allow_credentials=True,
-    # )
-    cors_config=None, 
+    cors_config=cors_config, 
 )
