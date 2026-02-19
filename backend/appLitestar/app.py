@@ -46,13 +46,17 @@ async def on_startup() -> None:
             await conn.run_sync(Base.metadata.create_all)
             print("✅ Aplicación iniciada con SQLite local.")
 
+@get("/")
+async def index() -> Redirect:
+    return Redirect(path="/auth/login-page")
+
 @get("/{path:path}", include_in_schema=False)
 async def redirect_all(path: str) -> Redirect:
     return Redirect(path="/auth/login-page")
 
 # 3. Instancia de la Aplicación Litestar
 app = Litestar(
-    route_handlers=[redirect_all,
+    route_handlers=[index, redirect_all, # Rutas globales
         AuthController,
         create_static_files_router(path="/static", directories=["static"]),
         # UserController, # Aquí añadirías más controladores si los separas
