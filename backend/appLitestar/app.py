@@ -14,7 +14,11 @@ from litestar.config.cors import CORSConfig
 
 # Configuración de Sesiones
 # Esto guardará un ID en una cookie y los datos en el servidor
-session_config = ServerSideSessionConfig()
+session_config = ServerSideSessionConfig(
+    samesite="none",  # Permite que la cookie se envíe desde dominios distintos
+    secure=True,      # Requerido para samesite="none" (Render usa HTTPS)
+    httponly=True     # Seguridad básica
+)
 BASE_DIR = Path(__file__).parent # Esto apunta a la carpeta appLitestar
 
 # Función para inicializar la base de datos al arrancar

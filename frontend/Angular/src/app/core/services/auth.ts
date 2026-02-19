@@ -14,7 +14,9 @@ export class Auth {
 
   // Método para iniciar sesión
   login(credentials: any): Observable<any> {
-    return this.http.post<any>(this.API_URL, credentials).pipe(
+    return this.http.post<any>(this.API_URL, credentials,{ 
+    withCredentials: true
+  }).pipe(
       tap(response => {
         if (response.message === 'success') {
           // Guardamos los datos que Litestar nos da
