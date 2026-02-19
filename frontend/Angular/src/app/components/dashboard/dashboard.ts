@@ -24,22 +24,25 @@ export class Dashboard implements OnInit {
   }
 
   loadData() {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  const headers = new HttpHeaders({
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  });
 
-    this.http.get<any[]>('https://prueba-tecnica-clerc-carvajal.onrender.com/auth/data', { 
+  this.http.get<any[]>('https://prueba-tecnica-clerc-carvajal.onrender.com/auth/data', { 
+    headers: headers,
     withCredentials: true 
-    }).subscribe({
-      next: (allData) => {
-        // Aplicamos el filtro defensivo que mencionaste
-        this.applyPermissions(allData);
-      },
-      error: (err) => {
-        console.error('Error cargando datos', err);
-        if (err.status === 401) this.authService.logout();
-      }
-    });
-  }
+  }).subscribe({
+    next: (allData) => {
+      console.log('Datos recibidos:', allData);
+      this.applyPermissions(allData);
+    },
+    error: (err) => {
+      console.error('Error detallado:', err);
+      // Si recibes el HTML aquí, es que Litestar te está redirigiendo
+    }
+  });
+}
   //Aqui por si acaso se vuelve a validar por si acaso el backend se equivoca, aunque no debería pasar.
   applyPermissions(allData: any[]) {
     if (this.userRole === 'admin') {
