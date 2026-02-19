@@ -2,25 +2,21 @@
 
 Este proyecto implementa un sistema de autenticación y tabla de datos con reglas de visibilidad según rol. Está basado en **Litestar** para el backend y utiliza HTML/CSS/JavaScript en el frontend.
 
-## 🚀 Despliegue de aplicación
-El proyecto esta disponible en la pagina de Render, puedes comprobar lo que hice en el siguiente link, puede de que la aplicación este durmiendo espera a que se termine de desplegar, tiempo aproximado 1 minuto:
+## 🚀 Despliegue en Render
+
+El proyecto está disponible en **Render**. Puedes acceder en el siguiente enlace (nota: la aplicación puede estar durmiendo al principio, espera aproximadamente 1 minuto para que se termine de desplegar):
+
 ```
 https://prueba-tecnica-clerc-carvajal.onrender.com/auth/login-page
 ```
 
-Algunos datos de inicio de sesion son:
-```
-jhon_doe
-12345
-```
-```
-ana_torres
-12345
-```
-```
-camila_navarro
-12345
-```
+### Credenciales de ejemplo
+
+| Rol | Usuario | Contraseña |
+|------|---------|-----------|
+| **Administrador** | `jhon_doe` | `12345` |
+| **Supervisor** | `ana_torres` | `12345` |
+| **Usuario** | `camila_navarro` | `12345` |
 
 
 ## 📁 Estructura principal
@@ -42,96 +38,126 @@ backend/
 ## 🛠 Requisitos previos
 
 - Python 3.10+ (recomendado 3.11)
-- `venv` (o cualquier entorno virtual de Python)
+- `venv` o cualquier gestor de entornos virtuales de Python
 - pip para instalar dependencias
 
-> En Windows se recomienda ejecutar desde un PowerShell con permisos adecuados.
-> O utilizar Visual Studio Code.
+> **Nota:** Se recomienda usar Windows PowerShell o Visual Studio Code para ejecutar los comandos.
 
-## 🚀 Instalación y puesta en marcha
+## 🚀 Instalación y Configuración
 
-1. **Clonar el repositorio**
+### Paso 1: Clonar el repositorio
 
-   ```powershell
-   git clone https://github.com/BastianRivas/Prueba-Tecnica-Clerc-Carvajal Prueba-Tecnica-Clerc-Carvajal
-   cd Prueba-Tecnica-Clerc-Carvajal\backend\appLitestar
-   ```
+```powershell
+git clone https://github.com/BastianRivas/Prueba-Tecnica-Clerc-Carvajal
+cd Prueba-Tecnica-Clerc-Carvajal
+```
 
-2. **Crear un entorno virtual y activarlo**
+### Paso 2: Acceder a la carpeta del backend
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
+```powershell
+cd backend\appLitestar
+```
 
-3. **Instalar dependencias**
+### Paso 3: Crear y activar entorno virtual
 
-   ```powershell
-   cd .\backend\appLitestar\ // para acceder a la carpeta con el contenido
-   pip install -r requirements.txt
-   ```
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
 
-4. **Configurar / inicializar base de datos**
+### Paso 4: Instalar dependencias
 
-   - Por defecto intenta conectarse a MySQL si las variables de entorno apuntan a un servidor.
-   ```
-    (configurar: `DATABASE_URL` con estrutura:  DATABASE_URL=mysql+aiomysql://usuario:password@localhost:3306/nombre_db en el .env) 
-    ```
+```powershell
+pip install -r requirements.txt
+```
 
-   - Fallback automático a SQLite (`test.db`) cuando no hay conexión MySQL.
+### Paso 5: Configurar la base de datos (opcional)
 
-   Para cargar los datos de `datosBrutos.json` (Son los datos que se nos entregaron para la prueba técnica):
+Por defecto, la aplicación usa **SQLite (`test.db`)** como fallback automático.
 
-   ```powershell
-   uvicorn app.main:app --reload   //Asegurate de estar en la carpeta adecuada
-   ```
+Si deseas usar **MySQL**, configura una variable de entorno:
 
-   Esto creará las tablas y añadirá usuarios con contraseña `12345` (hash).
+```powershell
+$env:DATABASE_URL = "mysql+aiomysql://usuario:password@localhost:3306/nombre_db"
+```
 
-5. **Iniciar la aplicación**
+### Paso 6: Cargar datos iniciales (Primera ejecución)
 
-   ```powershell
-   
-   uvicorn app:app --reload
-   ```
+```powershell
+python subirDatosABaseDatos.py
+```
 
-   Por defecto se sirve en `http://localhost:8000` (ver salida del servidor litestar).
+Este script crea las tablas y añade usuarios con contraseña `12345` (hasheada con bcrypt).
 
-6. **Abrir en el navegador**
+### Paso 7: Iniciar la aplicación
 
-   Navegar a `http://localhost:8000/auth/login-page` para ver la pantalla de login.
+```powershell
+uvicorn app:app --reload
+```
+
+La aplicación estará disponible en: `http://localhost:8000/auth/login-page`
 
 
 ## 🔐 Usuarios de ejemplo
 
-Los usuarios iniciales se cargan desde `data/datosBrutos.json`. El archivo no incluye contraseñas: el script `subirDatosABaseDatos.py` genera usuarios con contraseña genérica `12345` (hasheada).
+Los usuarios iniciales se cargan desde `data/datosBrutos.json`. El script `subirDatosABaseDatos.py` crea usuarios con contraseña genérica `12345` (hasheada con bcrypt). 
 
-Roles disponibles: `admin`, `supervisor`, `usuario`.
+**Roles disponibles:**
+- `admin` - Acceso total a todos los datos
+- `supervisor` - Acceso a supervisores y usuarios
+- `usuario` - Acceso solo a sus propios datos
 
 ## 🧩 Flujo de la aplicación
 
-1. El cliente envía POST a `/auth/login` con JSON `{username, password}`.
-2. El servidor verifica credenciales, crea sesión y responde con `nombre` y `rol`.
-3. El frontend muestra la tabla y llama a `/auth/data`.
-4. El servidor filtra datos según el rol y devuelve un arreglo de registros.
-5. Logout mediante POST a `/auth/logout` que borra la sesión.
+1. El cliente envía `POST /auth/login` con JSON `{username, password}`.
+2. El servidor verifica credenciales contra la base de datos.
+3. Si son válidas, se crea una sesión en el servidor y se devuelve `nombre` y `rol`.
+4. El frontend muestra el dashboard y llama a `GET /auth/data`.
+5. El servidor filtra los datos según el rol del usuario y devuelve el arreglo de registros.
+6. Los datos se cargan en una tabla DataTables para visualización interactiva.
+7. El logout mediante `POST /auth/logout` borra la sesión en el servidor.
 
-## ✅ Cumplimiento de requisitos
+## ✅ Características implementadas
 
-- Autenticación con contraseña hasheada (`bcrypt`).
-- Gestión de sesiones server-side.
-- Filtrado de datos según rol.
-- Frontend sencillo con DataTables y jQuery.
-- Sistema de persistencia con SQLAlchemy y script de carga.
+### Funcionalidad
+- ✅ Sistema de login con autenticación basada en usuario y contraseña
+- ✅ Gestión de sesiones server-side con Litestar
+- ✅ Tres roles de usuario: `admin`, `supervisor`, `usuario`
+- ✅ Visualización de datos filtrados según rol
+- ✅ Tabla interactiva con DataTables y jQuery
+- ✅ Logout funcional
+
+### Seguridad
+- ✅ Contraseñas hasheadas con bcrypt (máximo 72 caracteres)
+- ✅ Validación de credenciales en el backend
+- ✅ Sesiones almacenadas en el servidor (no en cookies)
+
+### Extras implementados
+- ✅ Uso de **DataTables** para visualización de datos
+- ✅ Implementación de **hashing de contraseñas** con passlib/bcrypt
+- ✅ **Base de datos** con SQLAlchemy (SQLite/MySQL)
+- ✅ Script de **seed de datos** (`subirDatosABaseDatos.py`)
+- ✅ **Despliegue en producción** (Render)
+- ✅ Código bien estructurado con Controllers, Services y Repositories
 
 
 ## 📦 Dependencias
 
-Algunas dependencias usadas:
+| Paquete | Descripción |
+|---------|-----------|
+| `litestar` | Framework web asíncrono moderno |
+| `sqlalchemy` | ORM y herramientas de base de datos |
+| `aiomysql` | Soporte asíncrono para MySQL |
+| `aiosqlite` | Soporte asíncrono para SQLite |
+| `passlib` | Biblioteca de hashing de contraseñas |
+| `bcrypt` | Algoritmo de hashing de contraseñas |
+| `Jinja2` | Motor de plantillas (vía `litestar.contrib.jinja`) |
+| `uvicorn` | Servidor ASGI de alto rendimiento |
 
-- `litestar`
-- `sqlalchemy`
-- `aiomysql` / `aiosqlite`
-- `passlib`
-- `Jinja2` (a través de `litestar.contrib.jinja`)
+
+## 📝 Notas
+
+- El archivo `requirements.txt` debe estar en la carpeta `backend/appLitestar/`
+- El proyecto usa variables de entorno para configuración (p.ej., `DATABASE_URL`)
+- La sesión se mantiene mediante un ID almacenado en cookies y datos en el servidor
 
