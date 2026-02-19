@@ -68,7 +68,7 @@ python -m venv .venv
 ### Paso 4: Instalar dependencias
 
 ```powershell
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 ### Paso 5: Configurar la base de datos (opcional)
