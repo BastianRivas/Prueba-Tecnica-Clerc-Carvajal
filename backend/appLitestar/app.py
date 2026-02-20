@@ -63,7 +63,7 @@ async def redirect_all(path: str) -> Redirect:
 
 # Definimos la configuración de CORS
 cors_config = CORSConfig(
-    allow_origins=["http://localhost:4200"], # Permite Angular local
+    allow_origins=["http://localhost:4200","https://prueba-tecnica-clerc-carvajal.vercel.app"], # Permite Angular local
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
     allow_credentials=True, # Importante si usas sesiones/cookies
