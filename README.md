@@ -1,163 +1,36 @@
-# Prueba Técnica - Sistema de Login y Visualización de Datos
+# Sistema de Gestión de Usuarios y Datos (Fullstack)
 
-Este proyecto implementa un sistema de autenticación y tabla de datos con reglas de visibilidad según rol. Está basado en **Litestar** para el backend y utiliza HTML/CSS/JavaScript en el frontend.
+Este repositorio contiene una solución integral compuesta por una API robusta y un cliente web moderno para la gestión de autenticación y visualización de datos según roles. Se opto por dar una mayor respuesta a la prueba tecnica que se nos planteo para el puesto de desarrollador full stack. Para ver solo la respuesta pedida ver el contenido de la carpeta backend. Por otro lado si se quiere ver el plus que le di revisar las dos propuestas (tanto frontend como backend). 
 
-## 🚀 Despliegue en Render
+## 🌐 Demos en Línea (Despliegue)
 
-El proyecto está disponible en **Render**. Puedes acceder en el siguiente enlace (nota: la aplicación puede estar durmiendo al principio, espera aproximadamente 1 minuto para que se termine de desplegar):
+El proyecto se encuentra desplegado y operativo en las siguientes plataformas, comprobar primero que la aplicación de Render este funcionando:
 
-```
-https://prueba-tecnica-clerc-carvajal.onrender.com/auth/login-page
-```
+* **Frontend (Angular):** [\[https://prueba-tecnica-clerc-carvajal.vercel.app/login\]](https://prueba-tecnica-clerc-carvajal.vercel.app/login)
+* **Backend API (Litestar):** [https://prueba-tecnica-clerc-carvajal.onrender.com/](https://prueba-tecnica-clerc-carvajal.onrender.com/)
 
-### Credenciales de ejemplo
+> **Nota:** Al estar en capas gratuitas, la API puede tardar unos 60 segundos en "despertar" en la primera petición.
 
-| Rol | Usuario | Contraseña |
-|------|---------|-----------|
-| **Administrador** | `jhon_doe` | `12345` |
-| **Supervisor** | `ana_torres` | `12345` |
-| **Usuario** | `camila_navarro` | `12345` |
+## 🏗️ Arquitectura del Proyecto
 
+El sistema se divide en dos componentes principales que interactúan mediante una API REST:
 
-## 📁 Estructura principal
-
-```
-backend/
-  appLitestar/
-    app.py              # punto de entrada de la aplicación
-    data/datosBrutos.json  # usuarios de ejemplo
-    subirDatosABaseDatos.py # script para poblar la base de datos
-    controller/         # controladores (rutas)
-    services/           # lógica de negocio y autenticación
-    repositories/       # acceso a base de datos
-    database/           # modelos y sesión SQLAlchemy
-    static/             # archivos estáticos (JS, CSS)
-    templates/          # vistas HTML (Jinja)
-```
-
-## 🛠 Requisitos previos
-
-- Python 3.10+ (recomendado 3.11)
-- `venv` o cualquier gestor de entornos virtuales de Python
-- pip para instalar dependencias
-
-> **Nota:** Se recomienda usar Windows PowerShell o Visual Studio Code para ejecutar los comandos.
-
-## 🚀 Instalación y Configuración
-
-### Paso 1: Clonar el repositorio
-
-```powershell
-git clone https://github.com/BastianRivas/Prueba-Tecnica-Clerc-Carvajal
-cd Prueba-Tecnica-Clerc-Carvajal
-```
-
-### Paso 2: Acceder a la carpeta del backend
-
-```powershell
-cd backend\appLitestar
-```
-
-### Paso 3: Crear y activar entorno virtual
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-### Paso 4: Instalar dependencias
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-### Paso 5: Configurar la base de datos (opcional)
-
-Por defecto, la aplicación usa **SQLite (`test.db`)** como fallback automático.
-
-Si deseas usar **MySQL**, configura una variable de entorno:
-
-```powershell
-$env:DATABASE_URL = "mysql+aiomysql://usuario:password@localhost:3306/nombre_db"
-```
-
-### Paso 6: Cargar datos iniciales (Primera ejecución)
-
-```powershell
-python subirDatosABaseDatos.py
-```
-
-Este script crea las tablas y añade usuarios con contraseña `12345` (hasheada con bcrypt).
-
-### Paso 7: Iniciar la aplicación
-
-```powershell
-uvicorn app:app --reload
-```
-
-La aplicación estará disponible en: `http://localhost:8000/auth/login-page`
+1.  **Backend (`/backend`):** Construido con **Litestar** (Python). Gestiona la lógica de negocio, seguridad (hashing con Bcrypt), sesiones server-side y persistencia en base de datos (SQLAlchemy).
+2.  **Frontend (`/frontend`):** Desarrollado en **Angular**. Ofrece una interfaz reactiva, consumo de servicios asíncronos y guardias de navegación según el rol del usuario, todo consultando a la api creada con Litestar.
 
 
-## 🔐 Usuarios de ejemplo
 
-Los usuarios iniciales se cargan desde `data/datosBrutos.json`. El script `subirDatosABaseDatos.py` crea usuarios con contraseña genérica `12345` (hasheada con bcrypt). 
+## 👥 Credenciales de Acceso, para ambos casos
 
-**Roles disponibles:**
-- `admin` - Acceso total a todos los datos
-- `supervisor` - Acceso a supervisores y usuarios
-- `usuario` - Acceso solo a sus propios datos
+| Rol | Usuario | Contraseña | Alcance |
+|------|---------|-----------|-----------|
+| **Admin** | `jhon_doe` | `12345` | Acceso total a todos los registros. |
+| **Supervisor** | `ana_torres` | `12345` | Visualiza supervisores y usuarios normales. |
+| **Usuario** | `camila_navarro` | `12345` | Solo puede ver su propia información. |
 
-## 🧩 Flujo de la aplicación
+## 🛠️ Guías de Instalación Local
 
-1. El cliente envía `POST /auth/login` con JSON `{username, password}`.
-2. El servidor verifica credenciales contra la base de datos.
-3. Si son válidas, se crea una sesión en el servidor y se devuelve `nombre` y `rol`.
-4. El frontend muestra el dashboard y llama a `GET /auth/data`.
-5. El servidor filtra los datos según el rol del usuario y devuelve el arreglo de registros.
-6. Los datos se cargan en una tabla DataTables para visualización interactiva.
-7. El logout mediante `POST /auth/logout` borra la sesión en el servidor.
+Para ejecutar este proyecto en tu máquina, sigue las instrucciones detalladas en cada carpeta:
 
-## ✅ Características implementadas
-
-### Funcionalidad
-- ✅ Sistema de login con autenticación basada en usuario y contraseña
-- ✅ Gestión de sesiones server-side con Litestar
-- ✅ Tres roles de usuario: `admin`, `supervisor`, `usuario`
-- ✅ Visualización de datos filtrados según rol
-- ✅ Tabla interactiva con DataTables y jQuery
-- ✅ Logout funcional
-
-### Seguridad
-- ✅ Contraseñas hasheadas con bcrypt (máximo 72 caracteres)
-- ✅ Validación de credenciales en el backend
-- ✅ Sesiones almacenadas en el servidor (no en cookies)
-
-### Extras implementados
-- ✅ Uso de **DataTables** para visualización de datos
-- ✅ Implementación de **hashing de contraseñas** con passlib/bcrypt
-- ✅ **Base de datos** con SQLAlchemy (SQLite/MySQL)
-- ✅ Script de **seed de datos** (`subirDatosABaseDatos.py`)
-- ✅ **Despliegue en producción** (Render)
-- ✅ Código bien estructurado con Controllers, Services y Repositories
-
-
-## 📦 Dependencias
-
-| Paquete | Descripción |
-|---------|-----------|
-| `litestar` | Framework web asíncrono moderno |
-| `sqlalchemy` | ORM y herramientas de base de datos |
-| `aiomysql` | Soporte asíncrono para MySQL |
-| `aiosqlite` | Soporte asíncrono para SQLite |
-| `passlib` | Biblioteca de hashing de contraseñas |
-| `bcrypt` | Algoritmo de hashing de contraseñas |
-| `Jinja2` | Motor de plantillas (vía `litestar.contrib.jinja`) |
-| `uvicorn` | Servidor ASGI de alto rendimiento |
-
-
-## 📝 Notas
-
-- El archivo `requirements.txt` debe estar en la carpeta `backend/appLitestar/`
-- El proyecto usa variables de entorno para configuración (p.ej., `DATABASE_URL`)
-- La sesión se mantiene mediante un ID almacenado en cookies y datos en el servidor
-
+* 📖 [Configurar el Backend (Litestar)](./backend/README.md)
+* 📖 [Configurar el Frontend (Angular)](./frontend/README.md)
