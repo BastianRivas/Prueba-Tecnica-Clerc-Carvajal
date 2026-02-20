@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common'; // Agregamos CurrencyPipe para la renta
-import { Auth } from '../../core/services/auth';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,50 +11,58 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./dashboard.css']
 })
 export class Dashboard implements OnInit {
-  filteredData: any[] = [];
-  userRole: string | null = '';
-  username: string | null = '';
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
-  constructor(private authService: Auth, private http: HttpClient) {}
+  // Usamos Signals para reactividad automática
+  allData = signal<any[]>([]);
+  loading = signal<boolean>(true);
+  
+  userRole = localStorage.getItem('user_role') || '';
+  username = localStorage.getItem('username') || '';
+
+  // Esta señal se actualiza SOLA cuando 'allData' cambia
+  filteredData = computed(() => {
+    const data = this.allData();
+    const role = this.userRole;
+    const name = this.username.toLowerCase().trim();
+
+    if (role === 'admin') return data;
+    if (role === 'supervisor') return data.filter(item => item.rol !== 'admin');
+    
+    return data.filter(item => item.nombre?.toLowerCase().trim() === name);
+  });
 
   ngOnInit() {
-    this.userRole = this.authService.getRole();
-    this.username = localStorage.getItem('username'); // Nombre con el que hizo login
     this.loadData();
   }
 
   loadData() {
-  const headers = new HttpHeaders({
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  });
+    const url = 'https://prueba-tecnica-clerc-carvajal.onrender.com/auth/data';
+    
+    this.http.get<any[]>(url, { withCredentials: true })
+      .subscribe({
+        next: (data) => {
+          this.allData.set(data || []);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.loading.set(false);
+        }
+      });
+  }
 
-  this.http.get<any[]>('https://prueba-tecnica-clerc-carvajal.onrender.com/auth/data', { 
-    headers: headers,
-    withCredentials: true 
-  }).subscribe({
-    next: (allData) => {
-      console.log('Datos recibidos:', allData);
-      this.applyPermissions(allData);
-    },
-    error: (err) => {
-      console.error('Error detallado:', err);
-      // Si recibes el HTML aquí, es que Litestar te está redirigiendo
-    }
-  });
-}
-  //Aqui por si acaso se vuelve a validar por si acaso el backend se equivoca, aunque no debería pasar.
-  applyPermissions(allData: any[]) {
-    if (this.userRole === 'admin') {
-      this.filteredData = allData;
-    } 
-    else if (this.userRole === 'supervisor') {
-      // Por si el backend se equivoca, filtramos admins
-      this.filteredData = allData.filter(item => item.rol !== 'admin');
-    } 
-    else {
-      // Solo su propio registro
-      this.filteredData = allData.filter(item => item.nombre === this.username);
-    }
+  logout() {
+    this.http.post('https://prueba-tecnica-clerc-carvajal.onrender.com/auth/logout', {}, { withCredentials: true })
+      .subscribe({
+        next: () => this.clearAndRedirect(),
+        error: () => this.clearAndRedirect()
+      });
+  }
+
+  private clearAndRedirect() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 }

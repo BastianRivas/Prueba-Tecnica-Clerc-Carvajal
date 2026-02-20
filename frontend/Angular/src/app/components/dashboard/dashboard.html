@@ -1,18 +1,48 @@
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>Nombre del Empleado</th>
-      <th>Rol</th>
-      <th>Renta Mensual</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of filteredData">
-      <td>{{ item.nombre }}</td>
-      <td>
-        <span [class]="'badge ' + item.rol">{{ item.rol }}</span>
-      </td>
-      <td>{{ item.renta | currency:'USD':'symbol':'1.2-2' }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="dashboard-wrapper">
+  <header class="header-bar">
+    <div class="user-meta">
+      <h2>Panel de Gestión</h2>
+      <p>Bienvenido, <strong>{{ username || 'Usuario' }}</strong> 
+        <span [class]="'badge ' + userRole">{{ userRole }}</span>
+      </p>
+    </div>
+    <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+  </header>
+
+  <div class="table-container">
+    
+    @if (loading()) {
+      <div class="loading-state">
+        <p>Cargando datos del servidor...</p>
+      </div>
+    } @else {
+      
+      @if (filteredData().length > 0) {
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nombre del Empleado</th>
+              <th>Rol</th>
+              <th>Renta Mensual</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filteredData(); track item.nombre) {
+              <tr>
+                <td>{{ item.nombre }}</td>
+                <td><span [class]="'badge ' + item.rol">{{ item.rol }}</span></td>
+                <td>{{ item.renta | currency:'USD' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="empty-msg">
+          <p>No se encontraron registros para tu perfil.</p>
+        </div>
+      }
+      
+    }
+
+  </div>
+</div>
